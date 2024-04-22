@@ -13,15 +13,23 @@ class Character:
         dmg = self.equip.compute_damage(self)
         return f"{self.name}\nstr {self.strength}\ndex {self.dexterity}\nint {self.intelligence}\n{self.equip.display_name()} {dmg} dmg"
 
+    def event_log(self) -> str:
+        """ Return a multiline string representing the events that occured in chronological order """
+
     def determine_best_equipment(self):
         best_equipment = Equipment('limbs', 1, 1, 1, 0)
         for item in self.inventory.values():
             print(
                 f"new item {item.name} {item.compute_damage(self)} :::: best item so far {best_equipment.name} {best_equipment.compute_damage(self)}")
-            # TODO: pick the best of equals by first alphabetically
-            if item.compute_damage(self) > best_equipment.compute_damage(self):
+            new_item_damage = item.compute_damage(self)
+            best_item_damage = best_equipment.compute_damage(self)
+            if new_item_damage > best_item_damage:
                 print(item.name)
                 best_equipment = item
+            elif new_item_damage == best_item_damage:
+                items = [item, best_equipment]
+                items.sort(key=lambda i: i.name)
+                best_equipment = items[0]
         return best_equipment
 
     def add_item_to_inventory(self, item):
